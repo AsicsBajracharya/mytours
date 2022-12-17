@@ -2,14 +2,21 @@ const fs = require('fs');
 
 const express = require('express');
 
+//lOGGER MIDDLEWARE
+const morgan = require('morgan');
+
 const app = express();
 
 //TO GET ACCESS TO REQUEST.BODY
 app.use(express.json());
 
+//BASIC ROUTING
 // app.get('/', (req, res) => {
 //   res.status(200).json({ message: 'the home page of an app' });
 // });
+
+//3rd PARTY LOGGER MIDDLEWARE
+app.use(morgan('dev'));
 
 //CUSTOM MIDDLEWARE
 app.use((req, res, next) => {
