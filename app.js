@@ -11,6 +11,9 @@ const app = express();
 //TO GET ACCESS TO REQUEST.BODY
 app.use(express.json());
 
+//SERVING STATIC FILES
+app.use(express.static(`${__dirname}/public`));
+
 //3rd PARTY LOGGER MIDDLEWARE
 app.use(morgan('dev'));
 
