@@ -98,8 +98,21 @@ app.use((req, res, next) => {
 });
 
 //A BETTER WAY TO HANDLE ROUTES
-// app.route('/api/v1.tours').get(getAllTours).post(createTour)
+// app.route('/api/v1/tours').get(getAllTours).post(createTour)
 // app.route('/api/v1/tours/:id').get(getATour).patch(updateTour).delete(deleteTour)
+
+//USER ROUTES
+// app.route('/api/v1/users').get(getAllUsers).post(createUser)
+// app.route('/api/v1/users/:id').get(getAUser).patch(updateUser).delete(deleteUser)
+
+//ROUTERS
+//DECLEARING ROUTERS
+// const tourRouter = express.Router();
+// app.use('/api/v1/tours', tourRouter);
+
+//USING ROUTERS
+// tourRouter.route('/').get(getAllTours).post(createTour);
+// tourRouter.route('/:id').get(getATour).patch(updateTour).delete(deleteTour);
 //STARTING THE SERVER
 app.listen(8000, () => {
   console.log('app running at port 8000');
