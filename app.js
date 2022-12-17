@@ -4,6 +4,9 @@ const express = require('express');
 
 const app = express();
 
+//TO GET ACCESS TO REQUEST.BODY
+app.use(express.json());
+
 // app.get('/', (req, res) => {
 //   res.status(200).json({ message: 'the home page of an app' });
 // });
@@ -20,6 +23,28 @@ app.get('/api/v1/tours', (req, res) => {
     results: tours?.length,
     data: {
       tours,
+    },
+  });
+});
+
+//POST A TOUR ROUTE
+app.post('/api/v1/tours', (req, res) => {
+  console.log(req.body);
+  const newId = tours.length - 1;
+  const newTour = Object.assign({ id: newId }, req.body);
+  tours.push(newTour);
+
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      console.log('there is an error');
+    }
+  );
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tour: newTour,
     },
   });
 });
