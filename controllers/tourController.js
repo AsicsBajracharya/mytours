@@ -5,6 +5,17 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkId = (req, res, next, val) => {
+  if (val * 1 > tours.length) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+    return;
+  }
+  next();
+};
+
 // HANDLERS
 //GET ALL TOUR ROUTE
 exports.getAllTours = (req, res) => {

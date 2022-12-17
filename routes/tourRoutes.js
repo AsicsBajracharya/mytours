@@ -6,11 +6,14 @@ const {
   getTour,
   updateTour,
   deleteTour,
+  checkId,
 } = require('../controllers/tourController');
 
 // ROUTERS
 // DECLEARING ROUTERS
 const router = express.Router();
+
+router.param('id', checkId);
 
 //USING ROUTERS
 router.route('/').get(getAllTours).post(createTour);
