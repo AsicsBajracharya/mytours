@@ -27,7 +27,7 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
-//GET A TOUR
+//GET A TOUR ROUTE
 app.get('/api/v1/tours/:id', (req, res) => {
   console.log(req.params);
   const tour = tours.find((el) => el.id == req.params.id * 1);
@@ -60,6 +60,16 @@ app.post('/api/v1/tours', (req, res) => {
       tour: newTour,
     },
   });
+});
+
+//PATCHINT A TOUR
+app.patch('/api/v1/tours/:id', (req, res) => {
+  res.send('patch request goes here');
+});
+
+//DELETE A TOUR
+app.delete('/api/v1/tours/:id', (req, res) => {
+  res.send('delete request goes here');
 });
 
 //STARTING THE SERVER
