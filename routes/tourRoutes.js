@@ -14,7 +14,7 @@ const {
 // DECLEARING ROUTERS
 const router = express.Router();
 
-router.param('id', checkId);
+// router.param('id', checkId);
 
 //USING ROUTERS
 router.route('/').get(getAllTours).post(checkBody, createTour);

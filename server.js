@@ -35,42 +35,6 @@ mongoose
 //     console.log('db connected successfully LOCALLY');
 //   });
 
-///SCHEMA
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'A tour must have a name'],
-    unique: true,
-  },
-  rating: {
-    type: String,
-    default: 4.5,
-  },
-  price: {
-    type: Number,
-    required: [true, 'A tour must have a price'],
-  },
-});
-
-//MODEL
-const Tour = mongoose.model('Tour', tourSchema);
-
-//TESTING THE MODEL
-const testTour = new Tour({
-  name: 'The forest hiker2',
-  rating: 4.7,
-  price: 497,
-});
-
-testTour
-  .save()
-  .then((doc) => {
-    console.log(doc);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 //STARTING THE SERVER
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
