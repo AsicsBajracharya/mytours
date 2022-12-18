@@ -15,7 +15,10 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
 //3rd PARTY LOGGER MIDDLEWARE
-app.use(morgan('dev'));
+// console.log(process.env.ENV);
+if (process.env.ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 //CUSTOM MIDDLEWARE
 app.use((req, res, next) => {
