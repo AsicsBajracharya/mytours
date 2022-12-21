@@ -21,10 +21,10 @@ if (process.env.ENV === 'development') {
 }
 
 //CUSTOM MIDDLEWARE
-app.use((req, res, next) => {
-  console.log('hello from the middleware');
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('hello from the middleware');
+//   next();
+// });
 
 //MANIPULATING REQ FROM CUSTOM MIDDLEWARE
 app.use((req, res, next) => {
@@ -41,5 +41,12 @@ app.use((req, res, next) => {
 //ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `can't find ${req.originalUrl}`,
+  });
+});
 
 module.exports = app;
