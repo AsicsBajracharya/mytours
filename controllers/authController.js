@@ -1,3 +1,4 @@
+const { promisify } = require('util'); //BUILT IN FUNCTION
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
@@ -16,6 +17,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
+    role: req.body.role,
   });
   const token = signToken(newUser._id);
 
@@ -77,3 +80,87 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+// exports.protect = catchAsync(async (req, res, next) => {
+//   // 1) GET TOKEN AND CHECK IF IT'S THERE
+//   let token;
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith('Bearer')
+//   ) {
+//     token = req.headers.authorization.split(' ')[1];
+//   }
+//   if (!token) {
+//     return next(
+//       new AppError('You are not logged in, please login to get access', 401)
+//     );
+//   }
+//   // 2) VALIDATE TOKEN
+//   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+//   // console.log('decoded', decoded);
+//   // 3) CHECK IF USER STILL EXIST
+//   const freshUser = await User.findById(decoded.id);
+//   if (!freshUser) {
+//     return next(
+//       new AppError('the user belong to this token does not exist', 401)
+//     );
+//   }
+
+//   // 4) if user changged password after the token was issued
+//   freshUser.changedPasswordAfter(decoded.iat);
+
+//   next();
+// });
+
+exports.protect = catchAsync(async (req, res, next) => {
+  //1) GETTING TOKEN AND CHECK IF IT'S THERE
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in! Please login to get access', 401)
+    );
+  }
+  //2) VERIFY TOKEN
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log('decoded', decoded);
+
+  //3) CHECK IF USER STILL EXISTS
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(
+      new AppError('The user belonging to this token no longer exists', 401)
+    );
+  }
+  //4) CHECK IF USER CHANGED PASSWORD AFTER THE TOKEN WAS ISSUED
+  if (await freshUser.changedPasswordAfter(decoded.iat)) {
+    console.log(
+      'password changed recently',
+      freshUser.changedPasswordAfter(decoded.iat)
+    );
+    return next(
+      new AppError('User recently changed password! Please login again', 401)
+    );
+  }
+  //GRANT ACCESS TO PROTECTED ROUTE
+  req.user = freshUser;
+  next();
+});
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    //ROLES ['admin', 'lead']
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have perssion to perform this action', 403)
+      );
+    }
+    next();
+  };
+};
