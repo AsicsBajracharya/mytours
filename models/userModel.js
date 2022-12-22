@@ -46,6 +46,18 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+//INSTANCE METHODS
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// userSchema.statics.testing = function () {
+//   console.log('hello from the instance method onthe user schema');
+// };
+
 //MODEL
 const User = mongoose.model('User', userSchema);
 
