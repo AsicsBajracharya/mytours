@@ -43,6 +43,18 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
+});
+
+//QUERY MIDDLEWARE
+userSchema.pre(/^find/, async function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
 });
 
 //DOCUMENT MIDDLEWARE
