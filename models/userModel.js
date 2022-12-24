@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: true,
+    required: [true, 'Please provide passwordConfirm'],
     validate: {
       //THIS ONLY WORKS ON SAVE
       validator: function (val) {
@@ -55,6 +55,13 @@ userSchema.pre('save', async function (next) {
     console.log('there was an error');
     next();
   }
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
 });
 
 //INSTANCE METHODS
@@ -93,7 +100,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
   console.log({ resetToken }, this.passwordResetToken);
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.passwordResetExpires = Date.now() + 30 * 60 * 1000;
 
   return resetToken;
 };

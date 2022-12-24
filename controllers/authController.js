@@ -4,12 +4,22 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 const sendEmail = require('../utils/email');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+// const createSendToken = (user, statusCode, res) =>{
+//   const token = signToken(user._id);
+//   const cookieOptions = {
+//     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+//     httpOnly: true
+//   };
+//   if(process.env.NODE_ENV == 'production')
+// }
 
 //CREATING A USER
 exports.signup = catchAsync(async (req, res, next) => {
@@ -209,4 +219,37 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  // 1) GET USER BASED ON THE TOKEN
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  // 2) if token has not expired, and there is a user, set the new password
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+
+  await user.save();
+
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
+
+  // 3) update changepasswordat property for the user
+
+  //   4) log the user in
+});
