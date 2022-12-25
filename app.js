@@ -15,6 +15,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 const xss = require('xss-clean');
 
+const hpp = require('hpp');
+
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -28,6 +30,13 @@ app.use(mongoSanitize());
 
 //DATA SANITIZATION AGAINST XSS
 app.use(xss());
+
+//PREVENT PARAMETER POLLUTION
+app.use(
+  hpp({
+    whitelist: ['duration', 'price'],
+  })
+);
 
 //SERVING STATIC FILES
 app.use(express.static(`${__dirname}/public`));
