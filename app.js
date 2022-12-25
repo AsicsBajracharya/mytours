@@ -9,23 +9,40 @@ const morgan = require('morgan');
 
 const rateLimit = require('express-rate-limit');
 
+const helmet = require('helmet');
+
+const mongoSanitize = require('express-mongo-sanitize');
+
+const xss = require('xss-clean');
+
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
 //TO GET ACCESS TO REQUEST.BODY
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
+
+//DATA SANITIZATION AGAINS NOSQL QUERY INJECTION
+app.use(mongoSanitize());
+
+//DATA SANITIZATION AGAINST XSS
+app.use(xss());
 
 //SERVING STATIC FILES
 app.use(express.static(`${__dirname}/public`));
 
 //3rd PARTY LOGGER MIDDLEWARE
+
 // console.log(process.env.ENV);
 if (process.env.ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+//SET SECURITY HTTP HEADERS
+app.use(helmet());
+
+//LIMIT REQUEST
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
