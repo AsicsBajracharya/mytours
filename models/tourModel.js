@@ -4,6 +4,8 @@ const slugify = require('slugify');
 
 const validator = require('validator');
 
+const User = require('./userModel');
+
 //SCHEMA
 const tourSchema = new mongoose.Schema(
   {
@@ -104,6 +106,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
   {
     //SCHEMA OPTIONS
@@ -126,6 +129,13 @@ tourSchema.pre('save', function (next) {
 
 tourSchema.post('save', function (doc, next) {
   // console.log(doc, ' from the post middleware');
+  next();
+});
+
+tourSchema.pre('save', async function (next) {
+  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
+
   next();
 });
 
