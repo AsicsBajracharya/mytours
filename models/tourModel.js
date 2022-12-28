@@ -106,7 +106,15 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    //EMBEDDING
+    // guides: Array,
+    //REFERENCING
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     //SCHEMA OPTIONS
@@ -133,8 +141,12 @@ tourSchema.post('save', function (doc, next) {
 });
 
 tourSchema.pre('save', async function (next) {
-  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
-  this.guides = await Promise.all(guidesPromises);
+  if (this.guides?.length) {
+    const guidesPromises = this.guides?.map(
+      async (id) => await User.findById(id)
+    );
+    this.guides = await Promise.all(guidesPromises);
+  }
 
   next();
 });
@@ -147,11 +159,20 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
 tourSchema.post(/^find/, function (docs, next) {
   // console.log('query took', Date.now() - this.start);
   // console.log(docs);
   next();
 });
+
 //MODEL
 const Tour = mongoose.model('Tour', tourSchema);
 
