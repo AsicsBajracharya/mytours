@@ -12,11 +12,14 @@ const {
 
 const { protect, restrictTo } = require('../controllers/authController');
 
+const reviewRouter = require('./reviewRoutes');
+
 // ROUTERS
 // DECLEARING ROUTERS
 const router = express.Router();
 
 // router.param('id', checkId);
+router.use('/:tourId/reviews', reviewRouter);
 
 // ROUTE ALIAS
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
