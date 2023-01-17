@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 
@@ -12,16 +13,6 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 // HANDLERS
-
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1) CREATE ERROR IF USER POSTS PASSWORD DATA
@@ -58,31 +49,16 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users: 'this route is not implemented yet',
-    },
-  });
-};
+exports.getAllUsers = factory.getAll(User);
+
+exports.getUser = factory.getOne(User);
 
 //POST A User ROUTE
-exports.createUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users: 'this route is not implemented yet',
-    },
-  });
-};
+exports.createUser = factory.createOne(User);
 
 //PATCHINT A User
-exports.updateUser = (req, res) => {
-  res.send('patch request goes here');
-};
+//DO NOT UPDATE PASSWORD WITH THIS
+exports.updateUser = factory.updateOne(User);
 
 //DELETE A User
-exports.deleteUser = (req, res) => {
-  res.send('delete request goes here');
-};
+exports.deleteUser = factory.deleteOne(User);
