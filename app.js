@@ -82,7 +82,7 @@ app.use((req, res, next) => {
 
 //CUSTOM MIDDLEWARE
 app.use((req, res, next) => {
-  console.log('hello from the middleware');
+  // console.log('hello from the middleware');
   next();
 });
 
