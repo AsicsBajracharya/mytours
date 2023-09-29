@@ -23,7 +23,7 @@ mongoose
     console.log('db connected successfully');
   });
 
-//CONNECTING TO THE LOCAL DATABASE
+// CONNECTING TO THE LOCAL DATABASE
 // mongoose
 //   .connect(process.env.DATABASE_LOCAL, {
 //     useNewUrlParser: true,
@@ -31,7 +31,7 @@ mongoose
 //     useFindAndModify: false,
 //   })
 //   .then((con) => {
-//     console.log(con.connections);
+//     // console.log(con.connections);
 //     console.log('db connected successfully LOCALLY');
 //   });
 

@@ -26,11 +26,14 @@ router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
 router.route('/tour-stats').get(getTourStats);
 
 //USING ROUTERS
-router.route('/').get(protect, getAllTours).post(createTour);
+router
+  .route('/')
+  .get(getAllTours)
+  .post(protect, restrictTo('admin', 'lead'), createTour);
 router
   .route('/:id')
   .get(getTour)
-  .patch(updateTour)
-  .delete(protect, restrictTo('admin', 'lead'), deleteTour);
+  .patch(protect, restrictTo('admin', 'lead'), updateTour)
+  .delete(restrictTo('admin', 'lead'), deleteTour);
 
 module.exports = router;

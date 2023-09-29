@@ -143,7 +143,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   //2) VERIFY TOKEN
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log('decoded', decoded);
+  // console.log('decoded', decoded);
 
   //3) CHECK IF USER STILL EXISTS
   const freshUser = await User.findById(decoded.id);
@@ -163,7 +163,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   //GRANT ACCESS TO PROTECTED ROUTE
-  console.log('asdfasdflasjdflasdkjf', freshUser);
   req.user = freshUser;
   next();
 });
