@@ -41,6 +41,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.getMe = (req, res, next) => {
+  console.log('THIS MIDDLEWARE RAN!!!!!!!!!!!');
   req.params.id = req.user.id;
   next();
 };
